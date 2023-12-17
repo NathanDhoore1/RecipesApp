@@ -1,12 +1,18 @@
-name: Build and Package App
+name: CI/CD for CRUD App
 
 on:
   push:
-    branches: [ main ] # Adjust branch as needed
+    branches: [ main ] 
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: windows-latest
+
+    env:
+      Solution_Name: 'Recipes.sln' 
+      Configuration: 'Release'
 
     steps:
       - name: Checkout code
@@ -15,19 +21,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '8.0' 
 
       - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build app
-        run: dotnet build --configuration Release
-
-      - name: Publish app
-        run: dotnet publish -c Release -o ./publish
-
-      - name: Create artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: my-app # Change to your app name
-          path: ./publish
+        run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
