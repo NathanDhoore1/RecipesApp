@@ -10,20 +10,26 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
-
-    env:
-      Solution_Name: 'Recipes.sln' 
-      Configuration: 'Release'
+    runs-on: windows-latest  
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0' 
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.0.x'  
 
-      - name: Restore dependencies
-        run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+    - name: Restore dependencies and build
+      working-directory: ./Recipes
+      run: |
+        dotnet restore ./Recipes.sln
+        dotnet build ./Recipes.sln --configuration Release
+
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: MyAppArtifacts
+        path: |
+            Recipes/bin/Release/net8.0-windows/**/*.exe
+            Recipes/bin/Release/net8.0-windows/**/*.dll
