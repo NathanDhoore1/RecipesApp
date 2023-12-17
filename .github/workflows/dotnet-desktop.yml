@@ -26,12 +26,12 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Test app
-        run: dotnet test # Add specific test commands if needed
+        run: dotnet test 
 
   deploy:
     runs-on: windows-latest
 
-    needs: build # Ensure 'build' job completes before deployment
+    needs: build
 
     steps:
       - name: Checkout code
